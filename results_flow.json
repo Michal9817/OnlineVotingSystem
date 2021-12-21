@@ -1,0 +1,624 @@
+[
+    {
+        "id": "2837aa0ea44510f6",
+        "type": "tab",
+        "label": "Wyniki",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "e15618f65ec5a7f8",
+        "type": "ui_table",
+        "z": "2837aa0ea44510f6",
+        "group": "fd5de2d027e938a9",
+        "name": "",
+        "order": 1,
+        "width": 24,
+        "height": 14,
+        "columns": [],
+        "outputs": 0,
+        "cts": false,
+        "x": 950,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "837e238b90338586",
+        "type": "mysql",
+        "z": "2837aa0ea44510f6",
+        "mydb": "ae7bf018daee4aaf",
+        "name": "",
+        "x": 830,
+        "y": 180,
+        "wires": [
+            [
+                "e15618f65ec5a7f8"
+            ]
+        ]
+    },
+    {
+        "id": "d9783771a75db977",
+        "type": "inject",
+        "z": "2837aa0ea44510f6",
+        "name": "",
+        "props": [
+            {
+                "p": "debug",
+                "v": "",
+                "vt": "date"
+            }
+        ],
+        "repeat": "30",
+        "crontab": "",
+        "once": true,
+        "onceDelay": "1",
+        "topic": "",
+        "x": 150,
+        "y": 180,
+        "wires": [
+            [
+                "c8f980316ecbe640"
+            ]
+        ]
+    },
+    {
+        "id": "30b22b4850cf9b1c",
+        "type": "ui_chart",
+        "z": "2837aa0ea44510f6",
+        "name": "",
+        "group": "fd5de2d027e938a9",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "label": "Lista 1",
+        "chartType": "horizontalBar",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1330,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "32340573c6cbe3a6",
+        "type": "function",
+        "z": "2837aa0ea44510f6",
+        "name": "parse query",
+        "func": "var results = msg.payload\nvar results_string = '';\nvar imie = '';\nvar nazwisko = '';\nvar im_naz='';\nvar pld;\n\nfor (var i = 0, len = results.length; i < len; i++){\n    imie = results[i].Imię\n    nazwisko = results[i].Nazwisko\n    im_naz = imie + ' ' + nazwisko;\n    \n    results_string += '\"'+im_naz+'\":'+String(results[i].Wynik)+','\n    \n    \n}\n\nresults_string = results_string.slice(0, -1); \n\nresults_string = '{' + results_string + '}'\n\npld = JSON.parse(results_string)\n\nmsg.payload = pld\n\n//console.log(pld);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 970,
+        "y": 220,
+        "wires": [
+            [
+                "5a16cad26e670f4d"
+            ]
+        ]
+    },
+    {
+        "id": "5a16cad26e670f4d",
+        "type": "split",
+        "z": "2837aa0ea44510f6",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "topic",
+        "x": 1110,
+        "y": 220,
+        "wires": [
+            [
+                "30b22b4850cf9b1c"
+            ]
+        ]
+    },
+    {
+        "id": "0f616c404a058119",
+        "type": "function",
+        "z": "2837aa0ea44510f6",
+        "name": "read all results",
+        "func": "msg.topic = 'select imie as Imię, nazwisko as Nazwisko, wynik as Wynik from wyniki'\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 180,
+        "wires": [
+            [
+                "837e238b90338586"
+            ]
+        ]
+    },
+    {
+        "id": "2ab4822057e7f1be",
+        "type": "mysql",
+        "z": "2837aa0ea44510f6",
+        "mydb": "ae7bf018daee4aaf",
+        "name": "",
+        "x": 830,
+        "y": 220,
+        "wires": [
+            [
+                "32340573c6cbe3a6"
+            ]
+        ]
+    },
+    {
+        "id": "bc034f919c2c7138",
+        "type": "function",
+        "z": "2837aa0ea44510f6",
+        "name": "read list 1 results",
+        "func": "msg.topic = 'select imie as Imię, nazwisko as Nazwisko, wynik as Wynik from wyniki WHERE lista=1 ORDER by wynik DESC'     \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 220,
+        "wires": [
+            [
+                "2ab4822057e7f1be"
+            ]
+        ]
+    },
+    {
+        "id": "968adba9eff84af5",
+        "type": "ui_chart",
+        "z": "2837aa0ea44510f6",
+        "name": "",
+        "group": "fd5de2d027e938a9",
+        "order": 3,
+        "width": 0,
+        "height": 0,
+        "label": "Lista 2",
+        "chartType": "horizontalBar",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1330,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "71ff2cb9e46c1270",
+        "type": "function",
+        "z": "2837aa0ea44510f6",
+        "name": "parse query",
+        "func": "var results = msg.payload\nvar results_string = '';\nvar imie = '';\nvar nazwisko = '';\nvar im_naz='';\nvar pld;\n\nfor (var i = 0, len = results.length; i < len; i++){\n    imie = results[i].Imię\n    nazwisko = results[i].Nazwisko\n    im_naz = imie + ' ' + nazwisko;\n    \n    results_string += '\"'+im_naz+'\":'+String(results[i].Wynik)+','\n    \n    \n}\n\nresults_string = results_string.slice(0, -1); \n\nresults_string = '{' + results_string + '}'\n\npld = JSON.parse(results_string)\n\nmsg.payload = pld\n\n//console.log(pld);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 970,
+        "y": 260,
+        "wires": [
+            [
+                "7fab483f05820d5c"
+            ]
+        ]
+    },
+    {
+        "id": "7fab483f05820d5c",
+        "type": "split",
+        "z": "2837aa0ea44510f6",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "topic",
+        "x": 1110,
+        "y": 260,
+        "wires": [
+            [
+                "968adba9eff84af5"
+            ]
+        ]
+    },
+    {
+        "id": "75664e0b3b459ca5",
+        "type": "mysql",
+        "z": "2837aa0ea44510f6",
+        "mydb": "ae7bf018daee4aaf",
+        "name": "",
+        "x": 830,
+        "y": 260,
+        "wires": [
+            [
+                "71ff2cb9e46c1270"
+            ]
+        ]
+    },
+    {
+        "id": "e9410131513f9a71",
+        "type": "function",
+        "z": "2837aa0ea44510f6",
+        "name": "read list 2 results",
+        "func": "msg.topic = 'select imie as Imię, nazwisko as Nazwisko, wynik as Wynik from wyniki WHERE lista=2 ORDER by wynik DESC'     \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 260,
+        "wires": [
+            [
+                "75664e0b3b459ca5"
+            ]
+        ]
+    },
+    {
+        "id": "4f9fd8c32b164bf5",
+        "type": "mysql",
+        "z": "2837aa0ea44510f6",
+        "mydb": "ae7bf018daee4aaf",
+        "name": "",
+        "x": 830,
+        "y": 300,
+        "wires": [
+            [
+                "ea0c42be45562274"
+            ]
+        ]
+    },
+    {
+        "id": "99e2d7a07dc00fb3",
+        "type": "function",
+        "z": "2837aa0ea44510f6",
+        "name": "read voter turnout",
+        "func": "var query = 'SELECT COUNT(DISTINCT pesel) AS liczba_glosujacych FROM glosujacy;'          \nquery += 'select count(glosowal) as glosowal from glosujacy where glosowal = \"tak\"'\n\nmsg.topic = query\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 670,
+        "y": 300,
+        "wires": [
+            [
+                "4f9fd8c32b164bf5"
+            ]
+        ]
+    },
+    {
+        "id": "ea0c42be45562274",
+        "type": "function",
+        "z": "2837aa0ea44510f6",
+        "name": "parse query",
+        "func": "var wszyscy = 0;\nvar tak = 0;\nvar pld = msg.payload;\nvar str = '';\nvar stasunek;\nvar data = '';\nvar test;\nvar dec_point = 2;\n\nwszyscy = pld[0][0].liczba_glosujacych;\ntak = pld[1][0].glosowal;\n\nstosunek = tak/wszyscy*100;\n\ndata = {\"Niezagłosowało\":wszyscy-tak,\"Zagłosowało\":tak};\n\n\ntest = +(Math.round(stosunek + \"e+\" + dec_point)  + \"e-\" + dec_point);\n\n//console.log(test);\n\nmsg.payload = data;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 970,
+        "y": 300,
+        "wires": [
+            [
+                "7b46f122f29c7d09"
+            ]
+        ]
+    },
+    {
+        "id": "7b46f122f29c7d09",
+        "type": "split",
+        "z": "2837aa0ea44510f6",
+        "name": "",
+        "splt": "\\n",
+        "spltType": "str",
+        "arraySplt": 1,
+        "arraySpltType": "len",
+        "stream": false,
+        "addname": "topic",
+        "x": 1110,
+        "y": 300,
+        "wires": [
+            [
+                "30e775733c935bd5"
+            ]
+        ]
+    },
+    {
+        "id": "30e775733c935bd5",
+        "type": "ui_chart",
+        "z": "2837aa0ea44510f6",
+        "name": "Pie chart 1",
+        "group": "fd5de2d027e938a9",
+        "order": 6,
+        "width": 0,
+        "height": 0,
+        "label": "Stosunek oddanych głosów",
+        "chartType": "pie",
+        "legend": "true",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": "50",
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#d55353",
+            "#446ce4",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 1350,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d0189f1f2ab83bb8",
+        "type": "inject",
+        "z": "2837aa0ea44510f6",
+        "name": "clear chart",
+        "props": [
+            {
+                "p": "payload"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "[]",
+        "payloadType": "str",
+        "x": 170,
+        "y": 420,
+        "wires": [
+            [
+                "0d51e3ce80066c07"
+            ]
+        ]
+    },
+    {
+        "id": "0d51e3ce80066c07",
+        "type": "function",
+        "z": "2837aa0ea44510f6",
+        "name": "clear chart",
+        "func": "msg.payload = []\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 390,
+        "y": 420,
+        "wires": [
+            [
+                "05393ec2a5e0a275"
+            ]
+        ]
+    },
+    {
+        "id": "05393ec2a5e0a275",
+        "type": "link out",
+        "z": "2837aa0ea44510f6",
+        "name": "",
+        "links": [
+            "d595279ab51389fd"
+        ],
+        "x": 495,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "d595279ab51389fd",
+        "type": "link in",
+        "z": "2837aa0ea44510f6",
+        "name": "",
+        "links": [
+            "05393ec2a5e0a275"
+        ],
+        "x": 1195,
+        "y": 320,
+        "wires": [
+            [
+                "30b22b4850cf9b1c",
+                "968adba9eff84af5",
+                "30e775733c935bd5"
+            ]
+        ]
+    },
+    {
+        "id": "c8f980316ecbe640",
+        "type": "link out",
+        "z": "2837aa0ea44510f6",
+        "name": "",
+        "links": [
+            "f18ad57dcf0a589f",
+            "4f8fa0187c88a817"
+        ],
+        "x": 235,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "f18ad57dcf0a589f",
+        "type": "link in",
+        "z": "2837aa0ea44510f6",
+        "name": "",
+        "links": [
+            "c8f980316ecbe640"
+        ],
+        "x": 355,
+        "y": 180,
+        "wires": [
+            [
+                "10fede065d4d793f"
+            ]
+        ]
+    },
+    {
+        "id": "4f8fa0187c88a817",
+        "type": "link in",
+        "z": "2837aa0ea44510f6",
+        "name": "",
+        "links": [
+            "c8f980316ecbe640"
+        ],
+        "x": 275,
+        "y": 400,
+        "wires": [
+            [
+                "0d51e3ce80066c07"
+            ]
+        ]
+    },
+    {
+        "id": "10fede065d4d793f",
+        "type": "delay",
+        "z": "2837aa0ea44510f6",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "x": 460,
+        "y": 180,
+        "wires": [
+            [
+                "0f616c404a058119",
+                "bc034f919c2c7138",
+                "e9410131513f9a71",
+                "99e2d7a07dc00fb3"
+            ]
+        ]
+    },
+    {
+        "id": "f49b12c151e01e80",
+        "type": "ui_spacer",
+        "z": "2837aa0ea44510f6",
+        "name": "spacer",
+        "group": "fd5de2d027e938a9",
+        "order": 4,
+        "width": 24,
+        "height": 1
+    },
+    {
+        "id": "2b51186da0b7e683",
+        "type": "ui_spacer",
+        "z": "2837aa0ea44510f6",
+        "name": "spacer",
+        "group": "fd5de2d027e938a9",
+        "order": 5,
+        "width": 24,
+        "height": 1
+    },
+    {
+        "id": "fd5de2d027e938a9",
+        "type": "ui_group",
+        "name": "Tabela kandydatów",
+        "tab": "988e56ba26228249",
+        "order": 1,
+        "disp": true,
+        "width": "24",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "ae7bf018daee4aaf",
+        "type": "MySQLdatabase",
+        "name": "",
+        "host": "localhost",
+        "port": "3306",
+        "db": "NISAS",
+        "tz": "",
+        "charset": "UTF8"
+    },
+    {
+        "id": "988e56ba26228249",
+        "type": "ui_tab",
+        "name": "Wyniki",
+        "icon": "sort",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    }
+]
