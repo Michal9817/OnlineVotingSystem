@@ -1,0 +1,1491 @@
+[
+    {
+        "id": "46f68c9231e6fdeb",
+        "type": "tab",
+        "label": "NISAS",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "5cba74bfa5a7d680",
+        "type": "ui_form",
+        "z": "46f68c9231e6fdeb",
+        "name": "login",
+        "label": "",
+        "group": "61aabd4644bf9517",
+        "order": 1,
+        "width": 24,
+        "height": 1,
+        "options": [
+            {
+                "label": "Imię",
+                "value": "imie",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Nazwisko",
+                "value": "nazwisko",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "PESEL",
+                "value": "pesel",
+                "type": "number",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Adres zamieszkania",
+                "value": "adres",
+                "type": "text",
+                "required": true,
+                "rows": null
+            },
+            {
+                "label": "Numer dowodu",
+                "value": "dowod",
+                "type": "text",
+                "required": true,
+                "rows": null
+            }
+        ],
+        "formValue": {
+            "imie": "",
+            "nazwisko": "",
+            "pesel": "",
+            "adres": "",
+            "dowod": ""
+        },
+        "payload": "",
+        "submit": "Zatwierdź",
+        "cancel": "Anuluj",
+        "topic": "topic",
+        "topicType": "msg",
+        "splitLayout": "",
+        "className": "",
+        "x": 150,
+        "y": 200,
+        "wires": [
+            [
+                "521b69ef7d742d4d",
+                "3ff39a4e63f6ead8"
+            ]
+        ]
+    },
+    {
+        "id": "51bc4dc79233f798",
+        "type": "ui_button",
+        "z": "46f68c9231e6fdeb",
+        "name": "VOTE",
+        "group": "29ebd1d171b110c6",
+        "order": 7,
+        "width": 0,
+        "height": 0,
+        "passthru": false,
+        "label": "GŁOSUJ",
+        "tooltip": "",
+        "color": "",
+        "bgcolor": "",
+        "className": "",
+        "icon": "",
+        "payload": "",
+        "payloadType": "str",
+        "topic": "topic",
+        "topicType": "msg",
+        "x": 150,
+        "y": 800,
+        "wires": [
+            [
+                "1444de5bd69beb67"
+            ]
+        ]
+    },
+    {
+        "id": "b9907c9ee9527aea",
+        "type": "ui_list",
+        "z": "46f68c9231e6fdeb",
+        "group": "29ebd1d171b110c6",
+        "name": "",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "lineType": "two",
+        "actionType": "check",
+        "allowHTML": true,
+        "outputs": 1,
+        "topic": "",
+        "x": 810,
+        "y": 460,
+        "wires": [
+            [
+                "85c9faf7113b7df2"
+            ]
+        ]
+    },
+    {
+        "id": "70445dbc575b45e4",
+        "type": "inject",
+        "z": "46f68c9231e6fdeb",
+        "name": "init",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": true,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payloadType": "date",
+        "x": 1050,
+        "y": 1160,
+        "wires": [
+            [
+                "93df5d5132673258",
+                "21bfb87051724dc7"
+            ]
+        ]
+    },
+    {
+        "id": "93df5d5132673258",
+        "type": "function",
+        "z": "46f68c9231e6fdeb",
+        "name": "empty candidate list",
+        "func": "var txt = '[]'       \n\n\nmsg.payload=JSON.parse(txt)\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1260,
+        "y": 1160,
+        "wires": [
+            [
+                "047f1a3c00f34a2f"
+            ]
+        ]
+    },
+    {
+        "id": "1444de5bd69beb67",
+        "type": "function",
+        "z": "46f68c9231e6fdeb",
+        "name": "trigger",
+        "func": "\n\nmsg.trigger=true;\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 270,
+        "y": 800,
+        "wires": [
+            [
+                "ad722b9fd2faf02a"
+            ]
+        ]
+    },
+    {
+        "id": "4860af98f9508d27",
+        "type": "function",
+        "z": "46f68c9231e6fdeb",
+        "name": "generate candidates list",
+        "func": "var kandydaci = msg.payload;\n//var kand_len = msg.payload.length;\n//var size = Object.keys(kandydaci)\n\n//msg.payload = kandydaci.kandydat0.imie;\n//msg.payload = kand_len\n\nvar keys = Object.keys(kandydaci);\n\nmsg.payload = keys\n\nvar kand_string='';\nvar pomoc1 = '{\"title\":\"';\n\nkand_string='[';\n\n\nfor (var i = 0, len = keys.length; i < len; i++) {\n  //console.log(kandydaci[keys[i]].imie);\n  \n  \n  kand_string+=pomoc1 + kandydaci[keys[i]].imie +' '+ kandydaci[keys[i]].nazwisko+' partia:'+ kandydaci[keys[i]].partia+' lista:'+ kandydaci[keys[i]].lista+' pozycja:'+ kandydaci[keys[i]].pozycja + '\",\"isChecked\":false},'\n  \n}\n\nkand_string = kand_string.slice(0, -1); \n\nkand_string+=']'\n\n\nmsg.payload = JSON.parse(kand_string);\n\n\n\nreturn msg;\n\n\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 730,
+        "y": 540,
+        "wires": [
+            [
+                "51ab85ef8762c0f4"
+            ]
+        ]
+    },
+    {
+        "id": "ad722b9fd2faf02a",
+        "type": "hold",
+        "z": "46f68c9231e6fdeb",
+        "name": "hold vote",
+        "x": 440,
+        "y": 800,
+        "wires": [
+            [
+                "ae2046db1cfe3fa4"
+            ]
+        ]
+    },
+    {
+        "id": "ae2046db1cfe3fa4",
+        "type": "function",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "func": "\n\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 800,
+        "wires": [
+            [
+                "e2d719de06617a05"
+            ]
+        ]
+    },
+    {
+        "id": "521b69ef7d742d4d",
+        "type": "file",
+        "z": "46f68c9231e6fdeb",
+        "name": "save login data",
+        "filename": "/home/pi/stuff/login.json",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "utf8",
+        "x": 340,
+        "y": 200,
+        "wires": [
+            [
+                "e44f8aa4bc2ac231",
+                "63dc4ff63f9a2653"
+            ]
+        ]
+    },
+    {
+        "id": "ab086964c70d0233",
+        "type": "file in",
+        "z": "46f68c9231e6fdeb",
+        "name": "read candidates data",
+        "filename": "/home/pi/stuff/kand_list.json",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "utf8",
+        "allProps": false,
+        "x": 240,
+        "y": 460,
+        "wires": [
+            [
+                "f6b8a41b54e0d025"
+            ]
+        ]
+    },
+    {
+        "id": "f6b8a41b54e0d025",
+        "type": "json",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 410,
+        "y": 460,
+        "wires": [
+            [
+                "b5fc161cc185a544"
+            ]
+        ]
+    },
+    {
+        "id": "922dc150c8bc180b",
+        "type": "ui_ui_control",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "events": "all",
+        "x": 440,
+        "y": 1180,
+        "wires": [
+            [
+                "6c4610d01d368dba"
+            ]
+        ]
+    },
+    {
+        "id": "15c2621d1c47fabc",
+        "type": "function",
+        "z": "46f68c9231e6fdeb",
+        "name": "hide ballot",
+        "func": "msg.payload = {\"group\":{\"hide\":[\"NISAS_KARTA_GŁOSOWANIA\"]}}        \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 210,
+        "y": 1180,
+        "wires": [
+            [
+                "922dc150c8bc180b"
+            ]
+        ]
+    },
+    {
+        "id": "df0bce31c3eedf91",
+        "type": "function",
+        "z": "46f68c9231e6fdeb",
+        "name": "show ballot",
+        "func": "msg.payload = {\"group\":{\"show\":[\"NISAS_KARTA_GŁOSOWANIA\"]}}        \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 210,
+        "y": 1220,
+        "wires": [
+            [
+                "922dc150c8bc180b"
+            ]
+        ]
+    },
+    {
+        "id": "b5fc161cc185a544",
+        "type": "function",
+        "z": "46f68c9231e6fdeb",
+        "name": "generate candidates list",
+        "func": "var kandydaci = msg.payload;\n//var kand_len = msg.payload.length;\n//var size = Object.keys(kandydaci)\n\n//msg.payload = kandydaci.kandydat0.imie;\n//msg.payload = kand_len\n\nvar keys = Object.keys(kandydaci);\n\nmsg.payload = keys\n\nvar kand_string='';\nvar pomoc1 = '{\"title\":\"';\n\nkand_string='[';\n\n\nfor (var i = 0, len = keys.length; i < len; i++) {\n  //console.log(kandydaci[keys[i]].imie);\n  \n  \n  kand_string+=pomoc1 + kandydaci[keys[i]].imie +' '+ kandydaci[keys[i]].nazwisko+' partia:'+ kandydaci[keys[i]].partia+' lista:'+ kandydaci[keys[i]].lista+' pozycja:'+ kandydaci[keys[i]].pozycja + '\",\"isChecked\":false},'\n  \n}\n\nkand_string = kand_string.slice(0, -1); \n\nkand_string+=']'\n\n\nmsg.payload = JSON.parse(kand_string);\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 460,
+        "wires": [
+            [
+                "b9907c9ee9527aea",
+                "454f6b3bc2f07281"
+            ]
+        ]
+    },
+    {
+        "id": "e2d719de06617a05",
+        "type": "file",
+        "z": "46f68c9231e6fdeb",
+        "name": "save login data",
+        "filename": "/home/pi/stuff/vote.json",
+        "appendNewline": true,
+        "createDir": false,
+        "overwriteFile": "true",
+        "encoding": "utf8",
+        "x": 740,
+        "y": 800,
+        "wires": [
+            [
+                "377bb3c95af207ca",
+                "978422bdc1c33b04",
+                "9d46067e7895043e"
+            ]
+        ]
+    },
+    {
+        "id": "53b92fa7a507f21e",
+        "type": "exec",
+        "z": "46f68c9231e6fdeb",
+        "command": "python3 /home/pi/stuff/send_vote.py",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 1230,
+        "y": 800,
+        "wires": [
+            [],
+            [],
+            [
+                "15f6cade986240f1"
+            ]
+        ]
+    },
+    {
+        "id": "e44f8aa4bc2ac231",
+        "type": "exec",
+        "z": "46f68c9231e6fdeb",
+        "command": "python3 /home/pi/stuff/main.py",
+        "addpay": "",
+        "append": "",
+        "useSpawn": "false",
+        "timer": "",
+        "winHide": false,
+        "oldrc": false,
+        "name": "",
+        "x": 590,
+        "y": 200,
+        "wires": [
+            [],
+            [],
+            [
+                "48cb1990126a1c6c"
+            ]
+        ]
+    },
+    {
+        "id": "0cd9cbe049d742c2",
+        "type": "link out",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "2a5affeb64b4d8c1"
+        ],
+        "x": 1535,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "2a5affeb64b4d8c1",
+        "type": "link in",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "0cd9cbe049d742c2"
+        ],
+        "x": 115,
+        "y": 440,
+        "wires": [
+            [
+                "ab086964c70d0233"
+            ]
+        ]
+    },
+    {
+        "id": "48cb1990126a1c6c",
+        "type": "function",
+        "z": "46f68c9231e6fdeb",
+        "name": "return error code",
+        "func": "var ok = msg.payload.code\n\nif (ok==1){//BLĄD\n    msg.error = \"Błąd logowania\"\n}\n\nif (ok==0){//OK\n    msg.error = \"Logowanie powiodło się\"\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 830,
+        "y": 200,
+        "wires": [
+            [
+                "105c5184afebd44b"
+            ]
+        ]
+    },
+    {
+        "id": "b0439918e664dd7b",
+        "type": "function",
+        "z": "46f68c9231e6fdeb",
+        "name": "return no msg on error",
+        "func": "if (msg.error==\"Błąd logowania\"){\n    \n}\nelse {\n    return msg;\n}\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1400,
+        "y": 200,
+        "wires": [
+            [
+                "0cd9cbe049d742c2"
+            ]
+        ]
+    },
+    {
+        "id": "047f1a3c00f34a2f",
+        "type": "link out",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "9d15d90d6a5dc34f",
+            "d25d4bcd205a2cf0"
+        ],
+        "x": 1395,
+        "y": 1180,
+        "wires": []
+    },
+    {
+        "id": "9d15d90d6a5dc34f",
+        "type": "link in",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "047f1a3c00f34a2f",
+            "377bb3c95af207ca",
+            "6c4610d01d368dba"
+        ],
+        "x": 115,
+        "y": 1160,
+        "wires": [
+            [
+                "15c2621d1c47fabc"
+            ]
+        ]
+    },
+    {
+        "id": "454f6b3bc2f07281",
+        "type": "link out",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "c08e4f653463e061"
+        ],
+        "x": 735,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "c08e4f653463e061",
+        "type": "link in",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "454f6b3bc2f07281"
+        ],
+        "x": 115,
+        "y": 1200,
+        "wires": [
+            [
+                "df0bce31c3eedf91"
+            ]
+        ]
+    },
+    {
+        "id": "377bb3c95af207ca",
+        "type": "link out",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "9d15d90d6a5dc34f"
+        ],
+        "x": 855,
+        "y": 820,
+        "wires": []
+    },
+    {
+        "id": "c7aa50231ce6a6a3",
+        "type": "file in",
+        "z": "46f68c9231e6fdeb",
+        "name": "read candidates data",
+        "filename": "/home/pi/stuff/kand_list.json",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "utf8",
+        "allProps": false,
+        "x": 380,
+        "y": 540,
+        "wires": [
+            [
+                "be557c53fc3a212a"
+            ]
+        ]
+    },
+    {
+        "id": "be557c53fc3a212a",
+        "type": "json",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "property": "payload",
+        "action": "",
+        "pretty": false,
+        "x": 550,
+        "y": 540,
+        "wires": [
+            [
+                "4860af98f9508d27"
+            ]
+        ]
+    },
+    {
+        "id": "dc9793a7d662e5b4",
+        "type": "change",
+        "z": "46f68c9231e6fdeb",
+        "name": "pass vote",
+        "rules": [
+            {
+                "t": "move",
+                "p": "payload",
+                "pt": "msg",
+                "to": "vote",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 200,
+        "y": 540,
+        "wires": [
+            [
+                "c7aa50231ce6a6a3"
+            ]
+        ]
+    },
+    {
+        "id": "51ab85ef8762c0f4",
+        "type": "function",
+        "z": "46f68c9231e6fdeb",
+        "name": "keep only one checkbox",
+        "func": "var v = msg.vote\nconsole.log(v)\nconsole.log(msg.payload.length)\n\nfor (var i = 0; i < msg.payload.length; i++){\n    \n    if (msg.payload[i].title==v.title && v.isChecked==true){\n        msg.payload[i].isChecked = v.isChecked\n        //console.log(msg.payload[i].isChecked)\n    }\n    \n    \n    console.log(msg.payload[i])\n}\n\n\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 970,
+        "y": 540,
+        "wires": [
+            [
+                "69226c2006e2a3a1"
+            ]
+        ]
+    },
+    {
+        "id": "69226c2006e2a3a1",
+        "type": "link out",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "d25d4bcd205a2cf0"
+        ],
+        "x": 1115,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "d25d4bcd205a2cf0",
+        "type": "link in",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "69226c2006e2a3a1",
+            "047f1a3c00f34a2f"
+        ],
+        "x": 735,
+        "y": 440,
+        "wires": [
+            [
+                "b9907c9ee9527aea"
+            ]
+        ]
+    },
+    {
+        "id": "978422bdc1c33b04",
+        "type": "delay",
+        "z": "46f68c9231e6fdeb",
+        "name": "wait for login data",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "x": 970,
+        "y": 800,
+        "wires": [
+            [
+                "53b92fa7a507f21e"
+            ]
+        ]
+    },
+    {
+        "id": "3ff39a4e63f6ead8",
+        "type": "link out",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "97408406430b0466"
+        ],
+        "x": 235,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "97408406430b0466",
+        "type": "link in",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "3ff39a4e63f6ead8"
+        ],
+        "x": 115,
+        "y": 1500,
+        "wires": [
+            [
+                "ea368417799400d9"
+            ]
+        ]
+    },
+    {
+        "id": "e486a6d474365456",
+        "type": "hold",
+        "z": "46f68c9231e6fdeb",
+        "name": "hold pesel",
+        "x": 390,
+        "y": 1520,
+        "wires": [
+            [
+                "30612027f1a08cd3"
+            ]
+        ]
+    },
+    {
+        "id": "ea368417799400d9",
+        "type": "function",
+        "z": "46f68c9231e6fdeb",
+        "name": "get pesel",
+        "func": "var pesel = msg.payload.pesel\n\nmsg.payload=pesel\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 200,
+        "y": 1520,
+        "wires": [
+            [
+                "e486a6d474365456"
+            ]
+        ]
+    },
+    {
+        "id": "43ab21c525d83312",
+        "type": "link in",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "3aad29cccab75c08"
+        ],
+        "x": 295,
+        "y": 1500,
+        "wires": [
+            [
+                "e486a6d474365456"
+            ]
+        ]
+    },
+    {
+        "id": "3aad29cccab75c08",
+        "type": "link out",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "43ab21c525d83312"
+        ],
+        "x": 935,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "89b3d4690507fb9c",
+        "type": "function",
+        "z": "46f68c9231e6fdeb",
+        "name": "return error code",
+        "func": "var ok = msg.payload.code\n\nif (ok==1){//BLĄD\n    msg.error = \"Błąd głosowania\"\n}\n\nif (ok==0){//OK\n    msg.error = \"Głosowanie powiodło się\"\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 230,
+        "y": 900,
+        "wires": [
+            [
+                "a48f7fc446b6c0b5"
+            ]
+        ]
+    },
+    {
+        "id": "2a7926bf2ab2efad",
+        "type": "function",
+        "z": "46f68c9231e6fdeb",
+        "name": "return no msg on error",
+        "func": "if (msg.error==\"Błąd logowania\"){\n    \n}\nelse {\n    msg.trigger=true\n    return msg;\n}\n\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 800,
+        "y": 900,
+        "wires": [
+            [
+                "3aad29cccab75c08"
+            ]
+        ]
+    },
+    {
+        "id": "30612027f1a08cd3",
+        "type": "function",
+        "z": "46f68c9231e6fdeb",
+        "name": "update voting status",
+        "func": "var query = \"UPDATE glosujacy SET glosowal = 'tak' WHERE pesel='\"+String(msg.payload)+\"'\"                            \n\nmsg.topic=query\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 1520,
+        "wires": [
+            [
+                "7bc6f2758a1e8646"
+            ]
+        ]
+    },
+    {
+        "id": "7bc6f2758a1e8646",
+        "type": "mysql",
+        "z": "46f68c9231e6fdeb",
+        "mydb": "ae7bf018daee4aaf",
+        "name": "",
+        "x": 750,
+        "y": 1520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1ce835ce71c6d38f",
+        "type": "ui_text",
+        "z": "46f68c9231e6fdeb",
+        "group": "fce99420b61c7b58",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "name": "message placeholder",
+        "label": "",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "x": 240,
+        "y": 1340,
+        "wires": []
+    },
+    {
+        "id": "bedf74fcb1b6fa58",
+        "type": "function",
+        "z": "46f68c9231e6fdeb",
+        "name": "hide msg",
+        "func": "msg.payload = {\"group\":{\"hide\":[\"NISAS_Wiadomość\"]}}        \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 200,
+        "y": 1260,
+        "wires": [
+            [
+                "922dc150c8bc180b"
+            ]
+        ]
+    },
+    {
+        "id": "613e46b8ce4d7be7",
+        "type": "function",
+        "z": "46f68c9231e6fdeb",
+        "name": "show msg",
+        "func": "msg.payload = {\"group\":{\"show\":[\"NISAS_Wiadomość\"]}}        \nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 200,
+        "y": 1300,
+        "wires": [
+            [
+                "922dc150c8bc180b"
+            ]
+        ]
+    },
+    {
+        "id": "b7c6612324a2ab93",
+        "type": "link in",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "d7724b877a07f6e2",
+            "54bedf2b424f624e",
+            "bec9bf0ba24b324e",
+            "21bfb87051724dc7",
+            "f590cf911e8f2342"
+        ],
+        "x": 115,
+        "y": 1320,
+        "wires": [
+            [
+                "1ce835ce71c6d38f"
+            ]
+        ]
+    },
+    {
+        "id": "989db05c22b9c512",
+        "type": "link in",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "6102a5e99745e010",
+            "e317c20ac3a3b7e2",
+            "21bfb87051724dc7",
+            "49c68c0e5eb68cc9",
+            "6c4610d01d368dba"
+        ],
+        "x": 115,
+        "y": 1240,
+        "wires": [
+            [
+                "bedf74fcb1b6fa58"
+            ]
+        ]
+    },
+    {
+        "id": "ef03bc7b89f0a315",
+        "type": "link in",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "54bedf2b424f624e",
+            "d7724b877a07f6e2",
+            "bec9bf0ba24b324e",
+            "f590cf911e8f2342"
+        ],
+        "x": 115,
+        "y": 1280,
+        "wires": [
+            [
+                "613e46b8ce4d7be7"
+            ]
+        ]
+    },
+    {
+        "id": "d7724b877a07f6e2",
+        "type": "link out",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "b7c6612324a2ab93",
+            "ef03bc7b89f0a315"
+        ],
+        "x": 615,
+        "y": 160,
+        "wires": []
+    },
+    {
+        "id": "63dc4ff63f9a2653",
+        "type": "function",
+        "z": "46f68c9231e6fdeb",
+        "name": "send msg",
+        "func": "msg.payload = \"Twoje dane są przetwarzane\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 520,
+        "y": 160,
+        "wires": [
+            [
+                "d7724b877a07f6e2"
+            ]
+        ]
+    },
+    {
+        "id": "54bedf2b424f624e",
+        "type": "link out",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "ef03bc7b89f0a315",
+            "b7c6612324a2ab93"
+        ],
+        "x": 1095,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "105c5184afebd44b",
+        "type": "function",
+        "z": "46f68c9231e6fdeb",
+        "name": "send msg",
+        "func": "msg.payload = msg.error\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1000,
+        "y": 200,
+        "wires": [
+            [
+                "1c6b39b2643d480b",
+                "54bedf2b424f624e"
+            ]
+        ]
+    },
+    {
+        "id": "1c6b39b2643d480b",
+        "type": "delay",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "3",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "x": 1180,
+        "y": 200,
+        "wires": [
+            [
+                "b0439918e664dd7b",
+                "6102a5e99745e010"
+            ]
+        ]
+    },
+    {
+        "id": "9d46067e7895043e",
+        "type": "function",
+        "z": "46f68c9231e6fdeb",
+        "name": "send msg",
+        "func": "msg.payload = \"Dziękujemy za oddanie głosu\"\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 940,
+        "y": 740,
+        "wires": [
+            [
+                "bec9bf0ba24b324e",
+                "047882412d00ed57"
+            ]
+        ]
+    },
+    {
+        "id": "bec9bf0ba24b324e",
+        "type": "link out",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "ef03bc7b89f0a315",
+            "b7c6612324a2ab93"
+        ],
+        "x": 1035,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "6102a5e99745e010",
+        "type": "link out",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "989db05c22b9c512"
+        ],
+        "x": 1275,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "047882412d00ed57",
+        "type": "delay",
+        "z": "46f68c9231e6fdeb",
+        "name": "hide msg",
+        "pauseType": "delay",
+        "timeout": "5",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "x": 1120,
+        "y": 740,
+        "wires": [
+            [
+                "e317c20ac3a3b7e2"
+            ]
+        ]
+    },
+    {
+        "id": "e317c20ac3a3b7e2",
+        "type": "link out",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "989db05c22b9c512"
+        ],
+        "x": 1215,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "21bfb87051724dc7",
+        "type": "link out",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "b7c6612324a2ab93",
+            "989db05c22b9c512"
+        ],
+        "x": 1135,
+        "y": 1180,
+        "wires": []
+    },
+    {
+        "id": "606972701c754892",
+        "type": "comment",
+        "z": "46f68c9231e6fdeb",
+        "name": "ballot visibility control",
+        "info": "",
+        "x": 200,
+        "y": 1100,
+        "wires": []
+    },
+    {
+        "id": "f6d5584ce2cd8fba",
+        "type": "comment",
+        "z": "46f68c9231e6fdeb",
+        "name": "message visibility control",
+        "info": "",
+        "x": 430,
+        "y": 1100,
+        "wires": []
+    },
+    {
+        "id": "d3020a821ed95f87",
+        "type": "comment",
+        "z": "46f68c9231e6fdeb",
+        "name": "initialize candidate list and other stuff",
+        "info": "",
+        "x": 1120,
+        "y": 1100,
+        "wires": []
+    },
+    {
+        "id": "783e436720f30afa",
+        "type": "comment",
+        "z": "46f68c9231e6fdeb",
+        "name": "set persons voting status to 'yes'",
+        "info": "",
+        "x": 230,
+        "y": 1440,
+        "wires": []
+    },
+    {
+        "id": "85c9faf7113b7df2",
+        "type": "link out",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "a71f01c0d4363292",
+            "ad9112ce0bbd20e6"
+        ],
+        "x": 895,
+        "y": 480,
+        "wires": []
+    },
+    {
+        "id": "a71f01c0d4363292",
+        "type": "link in",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "85c9faf7113b7df2"
+        ],
+        "x": 355,
+        "y": 780,
+        "wires": [
+            [
+                "ad722b9fd2faf02a"
+            ]
+        ]
+    },
+    {
+        "id": "e6fe52dcc22f2835",
+        "type": "comment",
+        "z": "46f68c9231e6fdeb",
+        "name": "login data validation",
+        "info": "",
+        "x": 190,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "c2510df00c731412",
+        "type": "comment",
+        "z": "46f68c9231e6fdeb",
+        "name": "candidates data processing",
+        "info": "",
+        "x": 210,
+        "y": 380,
+        "wires": []
+    },
+    {
+        "id": "0a414f727ded1202",
+        "type": "comment",
+        "z": "46f68c9231e6fdeb",
+        "name": "voting data processing",
+        "info": "",
+        "x": 200,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "f590cf911e8f2342",
+        "type": "link out",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "ef03bc7b89f0a315",
+            "b7c6612324a2ab93"
+        ],
+        "x": 495,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "a48f7fc446b6c0b5",
+        "type": "function",
+        "z": "46f68c9231e6fdeb",
+        "name": "send msg",
+        "func": "msg.payload = msg.error\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 400,
+        "y": 900,
+        "wires": [
+            [
+                "90c3a3bafe7b66c7",
+                "f590cf911e8f2342"
+            ]
+        ]
+    },
+    {
+        "id": "90c3a3bafe7b66c7",
+        "type": "delay",
+        "z": "46f68c9231e6fdeb",
+        "name": "hide msg",
+        "pauseType": "delay",
+        "timeout": "3",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "x": 580,
+        "y": 900,
+        "wires": [
+            [
+                "49c68c0e5eb68cc9",
+                "2a7926bf2ab2efad"
+            ]
+        ]
+    },
+    {
+        "id": "49c68c0e5eb68cc9",
+        "type": "link out",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "989db05c22b9c512"
+        ],
+        "x": 675,
+        "y": 920,
+        "wires": []
+    },
+    {
+        "id": "15f6cade986240f1",
+        "type": "link out",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "c8108d14449a1cf5"
+        ],
+        "x": 1415,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "c8108d14449a1cf5",
+        "type": "link in",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "15f6cade986240f1"
+        ],
+        "x": 115,
+        "y": 880,
+        "wires": [
+            [
+                "89b3d4690507fb9c"
+            ]
+        ]
+    },
+    {
+        "id": "ad9112ce0bbd20e6",
+        "type": "link in",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "85c9faf7113b7df2"
+        ],
+        "x": 115,
+        "y": 520,
+        "wires": [
+            [
+                "dc9793a7d662e5b4"
+            ]
+        ]
+    },
+    {
+        "id": "6c4610d01d368dba",
+        "type": "link out",
+        "z": "46f68c9231e6fdeb",
+        "name": "",
+        "links": [
+            "9d15d90d6a5dc34f",
+            "989db05c22b9c512"
+        ],
+        "x": 535,
+        "y": 1180,
+        "wires": []
+    },
+    {
+        "id": "3a46c8adf94ac431",
+        "type": "ui_spacer",
+        "z": "46f68c9231e6fdeb",
+        "name": "spacer",
+        "group": "29ebd1d171b110c6",
+        "order": 1,
+        "width": 24,
+        "height": 1
+    },
+    {
+        "id": "da6982dc840fc0f5",
+        "type": "ui_spacer",
+        "z": "46f68c9231e6fdeb",
+        "name": "spacer",
+        "group": "29ebd1d171b110c6",
+        "order": 3,
+        "width": 24,
+        "height": 1
+    },
+    {
+        "id": "72cce4a149fd4479",
+        "type": "ui_spacer",
+        "z": "46f68c9231e6fdeb",
+        "name": "spacer",
+        "group": "29ebd1d171b110c6",
+        "order": 4,
+        "width": 24,
+        "height": 1
+    },
+    {
+        "id": "7d70ecc8c7d81081",
+        "type": "ui_spacer",
+        "z": "46f68c9231e6fdeb",
+        "name": "spacer",
+        "group": "29ebd1d171b110c6",
+        "order": 5,
+        "width": 24,
+        "height": 1
+    },
+    {
+        "id": "cbb70b454c7dbade",
+        "type": "ui_spacer",
+        "z": "46f68c9231e6fdeb",
+        "name": "spacer",
+        "group": "29ebd1d171b110c6",
+        "order": 6,
+        "width": 24,
+        "height": 1
+    },
+    {
+        "id": "61aabd4644bf9517",
+        "type": "ui_group",
+        "name": "LOGOWANIE",
+        "tab": "e885711c8f16231a",
+        "order": 1,
+        "disp": true,
+        "width": "24",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "29ebd1d171b110c6",
+        "type": "ui_group",
+        "name": "KARTA GŁOSOWANIA",
+        "tab": "e885711c8f16231a",
+        "order": 2,
+        "disp": true,
+        "width": "24",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "ae7bf018daee4aaf",
+        "type": "MySQLdatabase",
+        "name": "",
+        "host": "localhost",
+        "port": "3306",
+        "db": "NISAS",
+        "tz": "",
+        "charset": "UTF8"
+    },
+    {
+        "id": "fce99420b61c7b58",
+        "type": "ui_group",
+        "name": "Wiadomość",
+        "tab": "e885711c8f16231a",
+        "order": 3,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "e885711c8f16231a",
+        "type": "ui_tab",
+        "name": "NISAS",
+        "icon": "poll",
+        "order": 1,
+        "disabled": false,
+        "hidden": false
+    }
+]
